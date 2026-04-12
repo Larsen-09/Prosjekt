@@ -1,0 +1,75 @@
+<%- include("partials/header") %>
+
+<h2>Caesar Cipher</h2>
+
+<div class="card">
+    <h3>Hva er Caesar Cipher?</h3>
+    <p>
+        Caesar cipher er en enkel krypteringsmetode oppkalt etter Julius Caesar, 
+        som brukte den til å sende hemmelige meldinger.
+    </p>
+    <p>
+        Metoden fungerer ved å flytte bokstavene i alfabetet et bestemt antall steg. 
+        For eksempel: med shift = 3 blir A → D, B → E osv.
+    </p>
+</div>
+
+<div class="card">
+    <h3>Prøv selv!</h3>
+
+    <input id="text" placeholder="Skriv tekst eller kryptert melding">
+    <input id="shift" type="number" placeholder="Shift (f.eks 3)">
+
+    <button onclick="encrypt()">Krypter</button>
+    <button onclick="decrypt()">Dekrypter</button>
+
+    <p id="result"></p>
+</div>
+
+
+<script>
+function encrypt() {
+    let text = document.getElementById("text").value;
+    let shift = parseInt(document.getElementById("shift").value);
+    let result = "";
+
+    for (let i = 0; i < text.length; i++) {
+        let c = text[i];
+
+        if (/[a-z]/i.test(c)) {
+            let code = text.charCodeAt(i);
+            let base = code >= 65 && code <= 90 ? 65 : 97;
+            result += String.fromCharCode((code - base + shift) % 26 + base);
+        } else {
+            result += c;
+        }
+    }
+
+    document.getElementById("result").innerText = "Kryptert: " + result;
+}
+
+
+function decrypt() {
+    let text = document.getElementById("text").value;
+    let shift = parseInt(document.getElementById("shift").value);
+    let result = "";
+
+    for (let i = 0; i < text.length; i++) {
+        let c = text[i];
+
+        if (/[a-z]/i.test(c)) {
+            let code = text.charCodeAt(i);
+            let base = code >= 65 && code <= 90 ? 65 : 97;
+
+            // minus shift + +26 for å unngå negative tall
+            result += String.fromCharCode((code - base - shift + 26) % 26 + base);
+        } else {
+            result += c;
+        }
+    }
+
+    document.getElementById("result").innerText = "Dekryptert: " + result;
+}
+</script>
+
+<%- include("partials/footer") %>

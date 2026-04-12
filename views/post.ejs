@@ -1,0 +1,19 @@
+<%- include("partials/header") %>
+
+<h2><%= post.title %></h2>
+<p><%= post.content %></p>
+
+<h3>Kommentarer</h3>
+
+<ul>
+<% comments.forEach(c => { %>
+    <li><%= c.content %></li>
+<% }) %>
+</ul>
+
+<form method="POST" action="/comment/<%= post.id %>">
+    <input name="content">
+    <button>Kommenter</button>
+</form>
+
+<%- include("partials/footer") %>

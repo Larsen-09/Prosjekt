@@ -1,0 +1,23 @@
+<%- include("partials/header") %>
+
+<h2>Innlegg</h2>
+
+<form method="POST" action="/posts">
+    <input name="title" placeholder="Tittel">
+    <textarea name="content"></textarea>
+    <button>Lag innlegg</button>
+</form>
+
+<ul>
+<% posts.forEach(post => { %>
+    <li>
+        <a href="/post/<%= post.id %>"><%= post.title %></a>
+
+        <form method="POST" action="/delete-post/<%= post.id %>" style="display:inline;">
+            <button>Slett</button>
+        </form>
+    </li>
+<% }) %>
+</ul>
+
+<%- include("partials/footer") %>
