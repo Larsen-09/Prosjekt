@@ -16,7 +16,7 @@
 
 <div class="card">
     <h3>Prøv selv!</h3>
-
+<!--lager inputfelt og knapper-->
     <input id="text" placeholder="Skriv tekst eller kryptert melding">
     <input id="shift" type="number" placeholder="Shift (f.eks 3)">
 
@@ -26,8 +26,8 @@
     <p id="result"></p>
 </div>
 
-
-<script>
+<!--krypterings funksjon-->
+<script> 
 function encrypt() {
     let text = document.getElementById("text").value;
     let shift = parseInt(document.getElementById("shift").value);
@@ -61,7 +61,6 @@ function decrypt() {
             let code = text.charCodeAt(i);
             let base = code >= 65 && code <= 90 ? 65 : 97;
 
-            // minus shift + +26 for å unngå negative tall
             result += String.fromCharCode((code - base - shift + 26) % 26 + base);
         } else {
             result += c;

@@ -6,9 +6,9 @@ const session = require('express-session');
 
 const app = express();
 const PORT = 3000;
-
+//ny database
 const db = new sqlite3.Database(path.join(__dirname, 'prosjekt.db'));
-
+//opprette tabeller
 db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
@@ -35,7 +35,7 @@ db.serialize(() => {
     )
   `);
 });
-
+//generelle settings
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -47,7 +47,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-
+//db settings
 function dbAll(sql, params = []) {
   return new Promise((resolve, reject) => {
     db.all(sql, params, (err, rows) => {
@@ -74,17 +74,18 @@ function dbRun(sql, params = []) {
     });
   });
 }
-
+//funksjon for å redirecte brukeren til login siden
 function requireLogin(req, res, next) {
   if (!req.session.userId) return res.redirect('/login');
   next();
 }
 
-
+//ruter
+//hjemside
 app.get('/', (req, res) => {
   res.render('index', { user: req.session.userId });
 });
-
+//registreringside
 app.get('/register', (req, res) => {
   res.render('register', { message: null });
 });
@@ -110,7 +111,7 @@ app.post('/register', async (req, res) => {
     res.render('register', { message: "Brukernavn finnes fra før" });
   }
 });
-
+//login side
 app.get('/login', (req, res) => {
   res.render('login', { message: null });
 });
@@ -134,17 +135,17 @@ app.post('/login', async (req, res) => {
   req.session.userId = user.id;
   res.redirect('/dashboard');
 });
-
+//logut side
 app.get('/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/');
 });
-
+//inlegg siden
 app.get('/dashboard', requireLogin, async (req, res) => {
   const posts = await dbAll('SELECT * FROM posts ORDER BY id DESC');
   res.render('dashboard', { posts });
 });
-
+//lage post side
 app.post('/posts', requireLogin, async (req, res) => {
   const { title, content } = req.body;
 
@@ -157,12 +158,12 @@ app.post('/posts', requireLogin, async (req, res) => {
 
   res.redirect('/dashboard');
 });
-
+//slett post side
 app.post('/delete-post/:id', requireLogin, async (req, res) => {
   await dbRun('DELETE FROM posts WHERE id = ?', [req.params.id]);
   res.redirect('/dashboard');
 });
-
+//se på post side
 app.get('/post/:id', async (req, res) => {
   const post = await dbGet(
     'SELECT * FROM posts WHERE id = ?',
@@ -176,7 +177,7 @@ app.get('/post/:id', async (req, res) => {
 
   res.render('post', { post, comments });
 });
-
+//kommentere side
 app.post('/comment/:id', async (req, res) => {
   await dbRun(
     'INSERT INTO comments (content, post_id) VALUES (?, ?)',
@@ -185,11 +186,11 @@ app.post('/comment/:id', async (req, res) => {
 
   res.redirect('/post/' + req.params.id);
 });
-
+//cipher side
 app.get('/cipher', (req, res) => {
   res.render('cipher');
 });
-
+//slett bruker knappen
 app.post('/delete-user', requireLogin, async (req, res) => {
   try {
     const userId = req.session.userId;
@@ -209,7 +210,7 @@ app.post('/delete-user', requireLogin, async (req, res) => {
     res.send("Kunne ikke slette bruker");
   }
 });
-
+//starter serveren
 app.listen(PORT, () => {
   console.log(`Server kjører på http://localhost:${PORT}`);
 });
